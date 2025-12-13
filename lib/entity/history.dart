@@ -1,13 +1,16 @@
-import 'package:mikufans/entity/media.dart';
+import 'dart:ffi';
+
+import 'package:mikufans/entity/work.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'history.g.dart';
 
 @JsonSerializable()
 class History {
-  final Media media;
-  final int episodeIndex;
-  final num lastViewPosition;
-  final DateTime lastViewAt;
+  Work media;
+  bool isLove = false;
+  int episodeIndex;
+  int lastViewPosition;
+  DateTime lastViewAt;
   History({
     required this.media,
     required this.episodeIndex,

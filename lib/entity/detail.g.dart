@@ -7,9 +7,9 @@ part of 'detail.dart';
 // **************************************************************************
 
 Detail _$DetailFromJson(Map<String, dynamic> json) => Detail(
-  media: Media.fromJson(json['media'] as Map<String, dynamic>),
+  media: Work.fromJson(json['media'] as Map<String, dynamic>),
   series: (json['series'] as List<dynamic>)
-      .map((e) => Media.fromJson(e as Map<String, dynamic>))
+      .map((e) => Work.fromJson(e as Map<String, dynamic>))
       .toList(),
   sources: (json['sources'] as List<dynamic>)
       .map((e) => Source.fromJson(e as Map<String, dynamic>))

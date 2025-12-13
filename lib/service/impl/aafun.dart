@@ -6,15 +6,12 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:mikufans/entity/detail.dart';
 import 'package:mikufans/entity/episode.dart';
-import 'package:mikufans/entity/media.dart';
+import 'package:mikufans/entity/work.dart';
 import 'package:mikufans/entity/source.dart';
 import 'package:mikufans/entity/timetable.dart';
 import 'package:mikufans/entity/view_info.dart';
 import 'package:mikufans/util/http_util.dart';
 import 'package:mikufans/service/parser.dart';
-import 'package:pointycastle/api.dart';
-import 'package:pointycastle/block/aes.dart';
-import 'package:pointycastle/block/modes/cbc.dart';
 
 class AafunParser extends Parser {
   @override
@@ -27,7 +24,10 @@ class AafunParser extends Parser {
   String get baseUrl => "https://www.aafun.cc";
 
   @override
-  Future<Detail?> fetchDetail(String mediaId, Function(dynamic) exceptionHandler) async {
+  Future<Detail?> fetchDetail(
+    String mediaId,
+    Function(dynamic) exceptionHandler,
+  ) async {
     try {
       var fullUrl = baseUrl + mediaId;
       var response = HttpUtil.createDio();
@@ -50,21 +50,24 @@ class AafunParser extends Parser {
           .querySelector(".hl-vod-data .hl-col-xs-12 span.hl-text-conch")
           ?.text;
       final info = doc.querySelectorAll(".hl-vod-data .hl-col-xs-12");
-      final actors = info.length >= 3 ? info[2].text : null;
-      final directors = info.length >= 4 ? info[3].text : null;
+      final actors = info[2].text;
+      final directors = info[3].text;
       final info2 = doc.querySelectorAll(
         ".hl-vod-data .hl-col-xs-12.hl-col-sm-4",
       );
-      final year = info2.isNotEmpty
-          ? info2[0].text.replaceAll(" ", "")
-          : null;
-      final genre = info2.length >= 3 ? info[2].text : null;
-      final airdate = info2.length >= 4 ? info[3].text : null;
+      final year = info2.isNotEmpty ? info2[0].text.replaceAll(" ", "") : null;
+      final genre = info[2].text;
+      final airdate = info[3].text;
       final description = doc
           .querySelector(".hl-vod-data .hl-col-xs-12.blurb")
           ?.text;
-
-      final media = Media(
+      final title = doc.querySelector("div.hl-dc-sub")?.text.trim();
+      final rating = doc.querySelector(".hl-score-nums span")?.text;
+      final ratingCount = doc
+          .querySelector("span.hl-score-data.hl-text-muted.hl-pull-right")
+          ?.text
+          .trim();
+      final media = Work(
         id: mediaId,
         titleCn: titme,
         cover: url,
@@ -73,14 +76,13 @@ class AafunParser extends Parser {
         directors: directors,
         airdate: year ?? airdate,
         type: genre,
-        introdution: description,
+        summary: description,
+        rating: rating,
+        ratingCount: ratingCount,
+        title: title,
       );
 
-      return Detail(
-        media: media,
-        series: List.empty(),
-        sources: sources,
-      );
+      return Detail(media: media, series: List.empty(), sources: sources);
     } catch (e) {
       exceptionHandler(e);
       return null;
@@ -88,7 +90,7 @@ class AafunParser extends Parser {
   }
 
   @override
-  Future<List<Media>> fetchSearch(
+  Future<List<Work>> fetchSearch(
     String keyword,
     int page,
     int size,
@@ -112,12 +114,13 @@ class AafunParser extends Parser {
             ?.text;
         Element? a = item.querySelector("div.hl-item-div a");
         String? status = item.querySelector("span.hl-lc-1.remarks")?.text;
-        return Media(
+
+        return Work(
           id: a!.attributes["href"],
           titleCn: a.attributes["title"],
           cover: a.attributes["data-original"],
           status: status,
-          directors: introduction,
+          summary: introduction,
           type: genre,
           actors: actor,
         );
@@ -129,15 +132,16 @@ class AafunParser extends Parser {
   }
 
   @override
-  Future<ViewInfo?> fetchView(String episodeId, Function(dynamic) exceptionHandler) async {
+  Future<ViewInfo?> fetchView(
+    String episodeId,
+    Function(dynamic) exceptionHandler,
+  ) async {
     try {
       var dio = HttpUtil.createDio();
       var value = await dio.get(baseUrl + episodeId);
 
       final doc = parse(value.data).body;
-      final script = doc?.querySelectorAll(
-        "script[type='text/javascript']",
-      );
+      final script = doc?.querySelectorAll("script[type='text/javascript']");
       if (script == null || script.isEmpty) {
         exceptionHandler(Exception("未找到视频"));
         return null;
@@ -145,7 +149,7 @@ class AafunParser extends Parser {
 
       for (var element in script) {
         if (element.text.contains("var player_aaaa")) {
-          var temp=element.text.substring(element.text.indexOf("{"));
+          var temp = element.text.substring(element.text.indexOf("{"));
           final objectString = json.decode(temp) as Map<String, dynamic>;
           final encodeUrl = objectString["url"];
           final decodeUrl = Uri.decodeComponent(
@@ -164,8 +168,10 @@ class AafunParser extends Parser {
           };
 
           // 获取player页面
-          var body = await HttpUtil.createDio()
-              .get(fullFullUrl, options: Options(headers: headers));
+          var body = await HttpUtil.createDio().get(
+            fullFullUrl,
+            options: Options(headers: headers),
+          );
           final playerDocument = parse(body.data);
 
           // 查找包含const encryptedUrl的script标签
@@ -196,9 +202,7 @@ class AafunParser extends Parser {
           final sessionKeyRegExp = RegExp(
             r'const\s+sessionKey\s*=\s*"([^"]+)"',
           );
-          final sessionKeyMatch = sessionKeyRegExp.firstMatch(
-            scriptContent,
-          );
+          final sessionKeyMatch = sessionKeyRegExp.firstMatch(scriptContent);
           if (sessionKeyMatch != null) {
             sessionKey = sessionKeyMatch.group(1);
           }
@@ -206,7 +210,7 @@ class AafunParser extends Parser {
           // 解密获取视频URL
           final videoUrl = decryptAES(encryptedUrl!, sessionKey!);
           final currentUrl = videoUrl.replaceFirst('http://', 'https://');
-          return ViewInfo(urls: [currentUrl],episodeId: episodeId);
+          return ViewInfo(urls: [currentUrl], episodeId: episodeId);
         }
       }
       return null;
@@ -217,16 +221,21 @@ class AafunParser extends Parser {
   }
 
   @override
-  Future<List<Timetable>> fetchWeekly(Function(dynamic) exceptionHandler) async {
+  Future<List<Timetable>> fetchWeekly(
+    Function(dynamic) exceptionHandler,
+  ) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<String> fetchRecommend(String html, Function(dynamic) exceptionHandler) async {
+  Future<String> fetchRecommend(
+    String html,
+    Function(dynamic) exceptionHandler,
+  ) async {
     throw UnimplementedError();
   }
 
-   /// 使用 encrypt 库简化 AES/CBC/PKCS5Padding 解密
+  /// 使用 encrypt 库简化 AES/CBC/PKCS5Padding 解密
   String decryptAES(String ciphertext, String key) {
     try {
       // Base64 解码密文
@@ -244,7 +253,10 @@ class AafunParser extends Parser {
       final encrypter = Encrypter(AES(keyObj, mode: AESMode.cbc));
 
       // 解密数据
-      final decrypted = encrypter.decryptBytes(Encrypted(Uint8List.fromList(encrypted)), iv: ivObj);
+      final decrypted = encrypter.decryptBytes(
+        Encrypted(Uint8List.fromList(encrypted)),
+        iv: ivObj,
+      );
 
       // 返回 UTF-8 解码后的明文
       return utf8.decode(decrypted);
@@ -253,5 +265,4 @@ class AafunParser extends Parser {
       rethrow;
     }
   }
-
 }

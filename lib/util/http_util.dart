@@ -59,7 +59,7 @@ class HttpUtil {
     delays.clear();
 
     for (final entry in sources.entries) {
-      final name = entry.key;
+      // final name = entry.key;
       final parser = entry.value;
 
       try {

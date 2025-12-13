@@ -1,11 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mikufans/component/media_card.dart';
 import 'package:mikufans/entity/detail.dart';
-import 'package:mikufans/entity/media.dart';
+import 'package:mikufans/entity/history.dart';
+
 import 'package:mikufans/service/impl/aafun.dart';
+import 'package:mikufans/util/store.dart';
 
 class DetailScreen extends StatefulWidget {
   final String mediaId;
@@ -18,8 +18,11 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  String _error = '';
+  History? history;
   final AafunParser _parser = AafunParser();
+  bool isLove = false;
+  int episodeIndex = 0;
+  String _error = '';
   Detail? _detail;
   void _detailhandle() async {
     var res = await _parser.fetchDetail(
@@ -39,14 +42,45 @@ class _DetailScreenState extends State<DetailScreen>
     });
   }
 
+  void _loadHistory() {
+    final histories = Store.getLocalHistory();
+    for (var element in histories) {
+      if (element.media.id == widget.mediaId) {
+        history = element;
+        setState(() {
+          isLove = element.isLove;
+          episodeIndex = element.episodeIndex;
+        });
+      }
+    }
+  }
+
+  void _saveHistory() {
+    final histories = Store.getLocalHistory();
+    if (history != null && isLove) {
+      history!.isLove = isLove;
+      history!.episodeIndex = episodeIndex;
+      histories.add(history!);
+      Store.setLocalHistory(histories);
+    }
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _loadHistory();
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadHistory();
     _detailhandle();
   }
 
   @override
   void dispose() {
+    _saveHistory();
     _tabController.dispose();
     super.dispose();
   }
@@ -71,8 +105,15 @@ class _DetailScreenState extends State<DetailScreen>
                 // ① 中部媒体卡片（固定高度）
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 150),
-                  height: 240,
-                  child: MediaCard(media: _detail!.media, onTap: (_) {}),
+                  height: 350,
+                  child: MediaCard(
+                    height: double.infinity,
+                    isLove: isLove,
+                    media: _detail!.media,
+                    showLoveIcon: true,
+                    onTap: (_) {},
+                    onLoveTap: () => setState(() => isLove = !isLove),
+                  ),
                 ),
 
                 // ② 线路选择 TabBar
@@ -136,6 +177,12 @@ class _DetailScreenState extends State<DetailScreen>
                                             .sources[lineIdx]
                                             .episodes[idx];
                                         print(episode.toJson());
+                                        var extra = {
+                                          'detail': _detail!,
+                                          'episodeIndex': idx,
+                                          'source': _detail!.sources[lineIdx],
+                                        };
+                                        context.push('/player', extra: extra);
                                       },
 
                                       child: Center(

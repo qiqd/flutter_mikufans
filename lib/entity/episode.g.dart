@@ -7,7 +7,7 @@ part of 'episode.dart';
 // **************************************************************************
 
 Episode _$EpisodeFromJson(Map<String, dynamic> json) =>
-    Episode(id: json['id'] as String, title: json['title'] as String);
+    Episode(id: json['id'] as String?, title: json['title'] as String?);
 
 Map<String, dynamic> _$EpisodeToJson(Episode instance) => <String, dynamic>{
   'id': instance.id,

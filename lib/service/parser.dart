@@ -1,7 +1,7 @@
 import 'dart:core';
 
 import 'package:mikufans/entity/detail.dart';
-import 'package:mikufans/entity/media.dart';
+import 'package:mikufans/entity/work.dart';
 import 'package:mikufans/entity/timetable.dart';
 import 'package:mikufans/entity/view_info.dart';
 
@@ -23,7 +23,7 @@ abstract class Parser {
   /// @param size 每页数量
   /// @param exceptionHandler 异常处理器
   /// @return List<Media>
-  Future<List<Media>> fetchSearch(
+  Future<List<Work>> fetchSearch(
     String keyword,
     int page,
     int size,
@@ -35,21 +35,30 @@ abstract class Parser {
   /// @param mediaId 媒体ID
   /// @param exceptionHandler 异常处理器
   /// @return Detail
-  Future<Detail?> fetchDetail(String mediaId, Function(dynamic) exceptionHandler);
+  Future<Detail?> fetchDetail(
+    String mediaId,
+    Function(dynamic) exceptionHandler,
+  );
 
   /// 解析播放信息
   ///
   /// @param episodeId 剧集id
   /// @param exceptionHandler 异常处理器
   /// @return ViewInfo
-  Future<ViewInfo?> fetchView(String episodeId, Function(dynamic) exceptionHandler);
+  Future<ViewInfo?> fetchView(
+    String episodeId,
+    Function(dynamic) exceptionHandler,
+  );
 
   /// 解析推荐列表
   ///
   /// @param html HTML内容
   /// @param exceptionHandler 异常处理器
   /// @return 推荐视频列表
-  Future<String> fetchRecommend(String html, Function(dynamic) exceptionHandler);
+  Future<String> fetchRecommend(
+    String html,
+    Function(dynamic) exceptionHandler,
+  );
 
   /// 获取每周更新时间表
   ///

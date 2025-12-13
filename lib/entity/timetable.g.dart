@@ -9,7 +9,7 @@ part of 'timetable.dart';
 Timetable _$TimetableFromJson(Map<String, dynamic> json) => Timetable(
   (json['week'] as num).toInt(),
   (json['medias'] as List<dynamic>)
-      .map((e) => Media.fromJson(e as Map<String, dynamic>))
+      .map((e) => Work.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 

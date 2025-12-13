@@ -7,8 +7,8 @@ part of 'source.dart';
 // **************************************************************************
 
 Source _$SourceFromJson(Map<String, dynamic> json) => Source(
-  index: (json['index'] as num).toInt(),
-  name: json['name'] as String,
+  index: (json['index'] as num?)?.toInt(),
+  name: json['name'] as String?,
   episodes: (json['episodes'] as List<dynamic>)
       .map((e) => Episode.fromJson(e as Map<String, dynamic>))
       .toList(),

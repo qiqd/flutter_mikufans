@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:html/parser.dart';
+
 import 'package:mikufans/service/impl/aafun.dart';
 
 void main() {
@@ -28,5 +28,4 @@ void main() {
       print(jsonEncode(result));
     });
   });
-
 }

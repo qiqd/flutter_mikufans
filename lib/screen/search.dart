@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mikufans/component/media_card.dart';
-import 'package:mikufans/entity/media.dart';
+import 'package:mikufans/entity/work.dart';
 import 'package:mikufans/service/impl/aafun.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final AafunParser _parser = AafunParser();
   String _keyword = "";
   bool _isSearching = false;
-  List<Media> _medias = List.empty();
+  List<Work> _medias = List.empty();
   void searchHandle(Function(String) onMssage) {
     _isSearching = true;
     _parser
@@ -75,7 +75,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       itemCount: _medias.length,
                       itemBuilder: (content, index) {
                         return MediaCard(
-                          media: Media(
+                          height: 220,
+                          media: Work(
                             id: _medias[index].id,
                             cover: _medias[index].cover,
                             titleCn: _medias[index].titleCn,

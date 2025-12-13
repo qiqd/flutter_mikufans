@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:mikufans/component/player.dart';
+import 'package:mikufans/entity/detail.dart';
+import 'package:mikufans/entity/source.dart';
 import 'package:mikufans/screen/detail.dart';
 import 'package:mikufans/screen/search.dart';
 import 'package:mikufans/screen/settting.dart';
 import 'package:mikufans/screen/subscribe.dart';
+import 'package:mikufans/util/store.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
+  Store.init();
   runApp(MyApp());
 }
 
@@ -48,20 +52,26 @@ class MyApp extends StatelessWidget {
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/player',
-                builder: (context, state) => PlayerScreen(),
-              ),
-            ],
-          ),
         ],
       ),
       GoRoute(
         path: '/detail',
         builder: (context, state) =>
             DetailScreen(mediaId: state.extra.toString()),
+      ),
+      GoRoute(
+        path: '/player',
+        builder: (context, state) {
+          final data = state.extra as Map<String, Object>;
+          final detail = data['detail'] as Detail;
+          final episodeIndex = data['episodeIndex'] as int;
+          final source = data['source'] as Source;
+          return PlayerScreen(
+            detail: detail,
+            episodeIndex: episodeIndex,
+            source: source,
+          );
+        },
       ),
     ],
   );
@@ -85,31 +95,32 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final router = GoRouter.of(context);
+    var currentPath = router.routerDelegate.currentConfiguration.uri.toString();
     return Scaffold(
       body: Row(
         children: [
-          NavigationRail(
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.search),
-                label: Text('Search'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.subscriptions),
-                label: Text('Subscribe'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.settings),
-                label: Text('Setting'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.play_arrow),
-                label: Text('Player'),
-              ),
-            ],
-            selectedIndex: navigationShell.currentIndex,
-            onDestinationSelected: (index) => navigationShell.goBranch(index),
-          ),
+          currentPath.contains("player")
+              ? Container()
+              : NavigationRail(
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.search),
+                      label: Text('Search'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.subscriptions),
+                      label: Text('Subscribe'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.settings),
+                      label: Text('Setting'),
+                    ),
+                  ],
+                  selectedIndex: navigationShell.currentIndex,
+                  onDestinationSelected: (index) =>
+                      navigationShell.goBranch(index),
+                ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(right: 16, bottom: 16),

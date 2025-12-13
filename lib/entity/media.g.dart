@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'media.dart';
+part of 'work.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Media _$MediaFromJson(Map<String, dynamic> json) => Media(
+Work _$MediaFromJson(Map<String, dynamic> json) => Work(
   id: json['id'] as String,
   subId: json['subId'] as String?,
   status: json['status'] as String?,
@@ -17,7 +17,7 @@ Media _$MediaFromJson(Map<String, dynamic> json) => Media(
   airdate: json['airdate'] as String?,
 );
 
-Map<String, dynamic> _$MediaToJson(Media instance) => <String, dynamic>{
+Map<String, dynamic> _$MediaToJson(Work instance) => <String, dynamic>{
   'id': instance.id,
   'subId': instance.subId,
   'status': instance.status,
