@@ -7,7 +7,7 @@ part 'history.g.dart';
 @JsonSerializable()
 class History {
   Work media;
-  bool isLove = false;
+  bool isLove;
   int episodeIndex;
   int lastViewPosition;
   DateTime lastViewAt;
@@ -16,6 +16,7 @@ class History {
     required this.episodeIndex,
     required this.lastViewPosition,
     required this.lastViewAt,
+    this.isLove = false,
   });
   factory History.fromJson(Map<String, dynamic> json) =>
       _$HistoryFromJson(json);

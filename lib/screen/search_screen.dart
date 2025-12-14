@@ -43,7 +43,12 @@ class _SearchScreenState extends State<SearchScreen> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: SearchBar(
-                hintText: '搜索动画...',
+                elevation: const WidgetStatePropertyAll(0),
+                surfaceTintColor: const WidgetStatePropertyAll(
+                  Colors.transparent,
+                ),
+                overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+                hintText: '输入关键字搜索 ',
                 trailing: [
                   IconButton(
                     icon: const Icon(Icons.search),

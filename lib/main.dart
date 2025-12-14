@@ -1,25 +1,73 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:mikufans/component/player.dart';
+import 'package:mikufans/screen/player_screen.dart';
 import 'package:mikufans/entity/detail.dart';
 import 'package:mikufans/entity/source.dart';
 import 'package:mikufans/screen/detail.dart';
-import 'package:mikufans/screen/search.dart';
-import 'package:mikufans/screen/settting.dart';
-import 'package:mikufans/screen/subscribe.dart';
-import 'package:mikufans/util/store.dart';
+import 'package:mikufans/screen/history_screen.dart';
+import 'package:mikufans/screen/search_screen.dart';
+import 'package:mikufans/screen/settting_screen.dart';
+import 'package:mikufans/screen/subscribe_screen.dart';
+import 'package:mikufans/util/store_util.dart';
+import 'package:tray_manager/tray_manager.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  MediaKit.ensureInitialized();
-  Store.init();
-  runApp(MyApp());
+void main() async {
+  try {
+    Store.init();
+    WidgetsFlutterBinding.ensureInitialized();
+    MediaKit.ensureInitialized();
+    await windowManager.ensureInitialized();
+    await trayManager.setIcon(
+      Platform.isWindows
+          ? 'lib/images/icon_windows.ico'
+          : 'lib/images/icon_linux.png',
+    );
+    windowManager.setPreventClose(Store.getBool('minimize_to_tray'));
+
+    WindowOptions windowOptions = const WindowOptions(
+      minimumSize: Size(800, 600),
+      titleBarStyle: TitleBarStyle.hidden,
+      center: true,
+      title: 'MikuFans',
+    );
+    Menu menu = Menu(
+      items: [
+        MenuItem(key: 'show_window', label: '显示主窗口'),
+        MenuItem.separator(),
+        MenuItem(key: 'exit_app', label: '退出应用'),
+      ],
+    );
+    await trayManager.setContextMenu(menu);
+    await trayManager.setToolTip('MikuFans');
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+    runApp(MyApp());
+  } catch (e, s) {
+    final logFile = File('${Directory.current.path}/crash.log');
+    logFile.writeAsStringSync(
+      '[${DateTime.now().toLocal()}] ${e.toString()}\n$s\n',
+      mode: FileMode.append,
+    );
+    _showCrashTip(logFile.path);
+    exit(1);
+  }
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
+class MyApp extends StatefulWidget {
+  static final themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
+  const MyApp({super.key});
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
+class _MyAppState extends State<MyApp> with TrayListener, WindowListener {
   final GoRouter _router = GoRouter(
     initialLocation: '/search',
     routes: [
@@ -41,6 +89,14 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 path: '/subscribe',
                 builder: (context, state) => SubscribeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/history',
+                builder: (context, state) => HistoryScreen(),
               ),
             ],
           ),
@@ -75,16 +131,93 @@ class MyApp extends StatelessWidget {
       ),
     ],
   );
+  String get _effectiveFont {
+    switch (Platform.operatingSystem) {
+      case 'windows':
+        return 'Microsoft YaHei UI'; // 最厚实
+      case 'macos':
+        return 'PingFang SC'; // 苹方，macOS 自带
+      case 'linux':
+        return 'Noto Sans CJK SC'; // 大多数发行版预装
+      default:
+        return 'Noto Sans'; // 兜底，理论上走不到
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    MyApp.themeNotifier.value =
+        ThemeMode.values[Store.getInt('theme_mode', defaultValue: 0)];
+    windowManager.addListener(this);
+    trayManager.addListener(this);
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    trayManager.removeListener(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-
-      routerConfig: _router,
-      title: 'MikuFans',
-      theme: ThemeData(primarySwatch: Colors.blue),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: MyApp.themeNotifier,
+      builder: (context, themeMode, child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: _router,
+          title: 'MikuFans',
+          themeMode: themeMode,
+          theme: ThemeData(
+            fontFamily: _effectiveFont,
+            colorSchemeSeed: const Color(0xfffb739a),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            fontFamily: _effectiveFont,
+            colorSchemeSeed: const Color(0xfffb739a),
+            brightness: Brightness.dark,
+            useMaterial3: true,
+          ),
+        );
+      },
     );
+  }
+
+  @override
+  void onWindowClose() async {
+    await windowManager.hide();
+    super.onWindowClose();
+  }
+
+  @override
+  void onTrayIconMouseUp() async {
+    await windowManager.show();
+    super.onTrayIconMouseUp();
+  }
+
+  @override
+  void onTrayIconMouseDown() async {
+    super.onTrayIconMouseDown();
+    await windowManager.show();
+  }
+
+  @override
+  void onTrayIconRightMouseDown() async {
+    super.onTrayIconRightMouseUp();
+    await trayManager.popUpContextMenu();
+  }
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) async {
+    super.onTrayMenuItemClick(menuItem);
+    if (menuItem.key == 'exit_app') {
+      windowManager.destroy();
+    } else if (menuItem.key == 'show_window') {
+      await windowManager.show();
+    }
   }
 }
 
@@ -98,37 +231,116 @@ class ScaffoldWithNavBar extends StatelessWidget {
     final router = GoRouter.of(context);
     var currentPath = router.routerDelegate.currentConfiguration.uri.toString();
     return Scaffold(
-      body: Row(
+      body: Column(
         children: [
-          currentPath.contains("player")
-              ? Container()
-              : NavigationRail(
-                  destinations: const [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.search),
-                      label: Text('Search'),
+          //自定义标题栏
+          GestureDetector(
+            onPanStart: (_) => windowManager.startDragging(),
+            child: Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey, width: 1),
+                ),
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 25, top: 5),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6), // 想多圆就调多大
+                        child: Image.asset(
+                          'lib/images/icon_linux.png',
+                          height: 30,
+                        ),
+                      ),
                     ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.subscriptions),
-                      label: Text('Subscribe'),
+                    Spacer(),
+                    IconButton(
+                      tooltip: "最小化",
+                      onPressed: () => windowManager.minimize(),
+                      icon: Icon(Icons.minimize_rounded),
                     ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.settings),
-                      label: Text('Setting'),
+                    IconButton(
+                      tooltip: "最大化",
+                      onPressed: () => windowManager.maximize(),
+                      icon: Icon(Icons.crop_square_rounded),
+                    ),
+                    IconButton(
+                      tooltip: "关闭",
+                      hoverColor: Colors.red,
+                      onPressed: () => windowManager.close(),
+                      icon: Icon(Icons.close_rounded),
                     ),
                   ],
-                  selectedIndex: navigationShell.currentIndex,
-                  onDestinationSelected: (index) =>
-                      navigationShell.goBranch(index),
                 ),
+              ),
+            ),
+          ),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: 16, bottom: 16),
-              child: navigationShell,
+            child: Row(
+              children: [
+                currentPath.contains("player")
+                    ? Container()
+                    : NavigationRail(
+                        indicatorShape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                        destinations: const [
+                          NavigationRailDestination(
+                            icon: Icon(Icons.search),
+                            label: Text('Search'),
+                          ),
+                          NavigationRailDestination(
+                            icon: Icon(Icons.subscriptions),
+                            label: Text('Subscribe'),
+                          ),
+                          NavigationRailDestination(
+                            icon: Icon(Icons.history_rounded),
+                            label: Text('History'),
+                          ),
+                          NavigationRailDestination(
+                            icon: Icon(Icons.settings),
+                            label: Text('Setting'),
+                          ),
+                        ],
+                        selectedIndex: navigationShell.currentIndex,
+                        onDestinationSelected: (index) =>
+                            navigationShell.goBranch(index),
+                      ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 16, bottom: 16),
+                    child: navigationShell,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+void _showCrashTip(String logPath) async {
+  final String msg = 'MikuFans 启动失败，请查看 $logPath';
+
+  if (Platform.isWindows) {
+    // Windows 弹窗
+    await Process.run('msg', ['*', msg]);
+  } else if (Platform.isMacOS) {
+    // macOS 弹窗（原生通知）
+    await Process.run('osascript', [
+      '-e',
+      'display notification "$msg" with title "MikuFans" sound name "Basso"',
+    ]);
+  } else if (Platform.isLinux) {
+    // Linux 弹窗
+    await Process.run('notify-send', ['-a', 'MikuFans', '启动失败', msg]);
   }
 }

@@ -5,7 +5,7 @@ import 'package:mikufans/entity/detail.dart';
 import 'package:mikufans/entity/history.dart';
 
 import 'package:mikufans/service/impl/aafun.dart';
-import 'package:mikufans/util/store.dart';
+import 'package:mikufans/util/store_util.dart';
 
 class DetailScreen extends StatefulWidget {
   final String mediaId;
@@ -27,7 +27,7 @@ class _DetailScreenState extends State<DetailScreen>
   void _detailhandle() async {
     var res = await _parser.fetchDetail(
       widget.mediaId,
-      (error) => setState(() => _error = error),
+      (error) => setState(() => _error = error.toString()),
     );
     if (res == null) {
       setState(() => _error = '获取详情失败');
@@ -57,12 +57,21 @@ class _DetailScreenState extends State<DetailScreen>
 
   void _saveHistory() {
     final histories = Store.getLocalHistory();
-    if (history != null && isLove) {
+    if (history == null) {
+      history = History(
+        media: _detail!.media,
+        lastViewPosition: 0,
+        isLove: isLove,
+        episodeIndex: episodeIndex,
+        lastViewAt: DateTime.now(),
+      );
+    } else {
       history!.isLove = isLove;
       history!.episodeIndex = episodeIndex;
-      histories.add(history!);
-      Store.setLocalHistory(histories);
+      history!.lastViewAt = DateTime.now();
     }
+    histories.add(history!);
+    Store.setLocalHistory(histories);
   }
 
   @override
@@ -80,9 +89,9 @@ class _DetailScreenState extends State<DetailScreen>
 
   @override
   void dispose() {
+    super.dispose();
     _saveHistory();
     _tabController.dispose();
-    super.dispose();
   }
 
   @override
@@ -107,12 +116,23 @@ class _DetailScreenState extends State<DetailScreen>
                   padding: EdgeInsets.symmetric(horizontal: 150),
                   height: 350,
                   child: MediaCard(
+                    hoverState: false,
                     height: double.infinity,
+                    episodeIndex: episodeIndex,
+                    showEpisodeIndexOnRight: true,
                     isLove: isLove,
                     media: _detail!.media,
                     showLoveIcon: true,
                     onTap: (_) {},
                     onLoveTap: () => setState(() => isLove = !isLove),
+                    onContinueTap: (episodeIndex) {
+                      var extra = {
+                        'detail': _detail!,
+                        'episodeIndex': episodeIndex,
+                        'source': _detail!.sources[0],
+                      };
+                      context.push('/player', extra: extra);
+                    },
                   ),
                 ),
 
@@ -173,10 +193,6 @@ class _DetailScreenState extends State<DetailScreen>
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(8),
                                       onTap: () {
-                                        var episode = _detail!
-                                            .sources[lineIdx]
-                                            .episodes[idx];
-                                        print(episode.toJson());
                                         var extra = {
                                           'detail': _detail!,
                                           'episodeIndex': idx,
