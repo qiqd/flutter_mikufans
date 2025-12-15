@@ -7,8 +7,8 @@ class Store {
   static const String key = "mikufans_local_history";
   static late SharedPreferences prefs;
 
-  static void init() {
-    SharedPreferences.getInstance().then((onValue) => prefs = onValue);
+  static Future<void> init() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   static bool getBool(String key, {bool defaultValue = false}) {

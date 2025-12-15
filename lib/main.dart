@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:mikufans/component/title_bar.dart';
 import 'package:mikufans/screen/player_screen.dart';
 import 'package:mikufans/entity/detail.dart';
 import 'package:mikufans/entity/source.dart';
@@ -18,11 +19,11 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   try {
-    Store.init();
+    await Store.init();
     WidgetsFlutterBinding.ensureInitialized();
     MediaKit.ensureInitialized();
-    await windowManager.ensureInitialized();
-    await trayManager.setIcon(
+    windowManager.ensureInitialized();
+    trayManager.setIcon(
       Platform.isWindows
           ? 'lib/images/icon_windows.ico'
           : 'lib/images/icon_linux.png',
@@ -42,8 +43,8 @@ void main() async {
         MenuItem(key: 'exit_app', label: '退出应用'),
       ],
     );
-    await trayManager.setContextMenu(menu);
-    await trayManager.setToolTip('MikuFans');
+    trayManager.setContextMenu(menu);
+    trayManager.setToolTip('MikuFans');
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       await windowManager.focus();
@@ -235,53 +236,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       body: Column(
         children: [
           //自定义标题栏
-          GestureDetector(
-            onPanStart: (_) => windowManager.startDragging(),
-            child: Container(
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border(
-                  bottom: BorderSide(color: Colors.grey, width: 1),
-                ),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 25, top: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.asset(
-                          'lib/images/icon_linux.png',
-                          height: 30,
-                        ),
-                      ),
-                    ),
-                    Spacer(),
-                    IconButton(
-                      tooltip: "最小化",
-                      onPressed: () => windowManager.minimize(),
-                      icon: Icon(Icons.minimize_rounded),
-                    ),
-                    IconButton(
-                      tooltip: "最大化",
-                      onPressed: () => windowManager.maximize(),
-                      icon: Icon(Icons.crop_square_rounded),
-                    ),
-                    IconButton(
-                      tooltip: "关闭",
-                      hoverColor: Colors.red,
-                      onPressed: () => windowManager.close(),
-                      icon: Icon(Icons.close_rounded),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          TitleBar(),
           Expanded(
             child: Row(
               children: [

@@ -29,7 +29,18 @@ class TitleBar extends StatelessWidget {
                   child: Image.asset('lib/images/icon_linux.png', height: 30),
                 ),
               ),
-              Spacer(),
+              Expanded(
+                child: GestureDetector(
+                  onDoubleTap: () async {
+                    if (await windowManager.isMaximized()) {
+                      windowManager.restore();
+                    } else {
+                      windowManager.maximize();
+                    }
+                  },
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
               IconButton(
                 tooltip: "最小化",
                 onPressed: () => windowManager.minimize(),
