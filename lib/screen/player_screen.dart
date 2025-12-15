@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -56,7 +54,11 @@ class _PlayerScreenState extends State<PlayerScreen>
     errorMsg = "";
     isLoading = true;
     final info = await aafun.fetchView(
-      widget.source.episodes[currentEpisodeIndex.value].id!,
+      widget
+          .detail
+          .sources[currentSourceIndex]
+          .episodes[widget.episodeIndex]
+          .id!,
       (err) {
         setState(() {
           errorMsg = err.toString();
@@ -75,7 +77,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           });
     } else {
       setState(() {
-        errorMsg = "获取播放地址失败";
+        errorMsg = "获取播放地址失败,试着切换其他源";
       });
     }
     isLoading = false;
@@ -99,7 +101,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         .firstOrNull;
     if (history != null) {
       setState(() {
-        currentEpisodeIndex.value = history.episodeIndex;
+        currentEpisodeIndex.value = widget.episodeIndex;
         _historyPosition = Duration(milliseconds: history.lastViewPosition);
       });
     }
