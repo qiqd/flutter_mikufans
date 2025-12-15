@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -216,6 +215,9 @@ class _MyAppState extends State<MyApp> with TrayListener, WindowListener {
   void onTrayMenuItemClick(MenuItem menuItem) async {
     super.onTrayMenuItemClick(menuItem);
     if (menuItem.key == 'exit_app') {
+      _router.go('/search');
+      await windowManager.hide();
+      await Future.delayed(Duration(milliseconds: 100));
       windowManager.destroy();
     } else if (menuItem.key == 'show_window') {
       await windowManager.show();

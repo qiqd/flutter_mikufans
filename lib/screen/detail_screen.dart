@@ -107,6 +107,9 @@ class _DetailScreenState extends State<DetailScreen>
           Expanded(
             child: Scaffold(
               appBar: AppBar(
+                scrolledUnderElevation: 0,
+                elevation: 0,
+                backgroundColor: Colors.transparent,
                 title: const Text('详情'),
                 leading: IconButton(
                   onPressed: context.pop,

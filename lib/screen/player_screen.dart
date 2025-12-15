@@ -30,7 +30,7 @@ class PlayerScreen extends StatefulWidget {
 }
 
 class _PlayerScreenState extends State<PlayerScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WindowListener {
   late final player = Player();
   final aafun = AafunParser();
   late final controller = VideoController(player);
@@ -139,8 +139,15 @@ class _PlayerScreenState extends State<PlayerScreen>
   }
 
   @override
+  void onWindowBlur() {
+    _saveHistory();
+    super.onWindowBlur();
+  }
+
+  @override
   void initState() {
     super.initState();
+    windowManager.addListener(this);
     _listenPlayer();
     _loadHistory();
     initPlayerInfo(initPosition: _historyPosition);
@@ -149,6 +156,7 @@ class _PlayerScreenState extends State<PlayerScreen>
   @override
   void dispose() {
     _saveHistory();
+    windowManager.removeListener(this);
     tabController.dispose();
     player.dispose();
     super.dispose();
@@ -229,6 +237,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                   }
                 },
                 icon: Icon(Icons.skip_next_rounded, color: Colors.white),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: MaterialDesktopPositionIndicator(),
               ),
               ValueListenableBuilder(
                 valueListenable: currentEpisodeIndex,
@@ -318,7 +330,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                 },
                 icon: Icon(Icons.skip_next_rounded, color: Colors.white),
               ),
-
+              MaterialDesktopPositionIndicator(),
               MaterialDesktopVolumeButton(),
               Spacer(),
               MaterialDesktopFullscreenButton(),

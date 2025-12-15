@@ -24,19 +24,13 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
   }
 
   @override
-  void activate() {
-    super.activate();
-    histories = Store.getLocalHistory();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
       key: const Key('subscribe_screen'),
       onVisibilityChanged: (info) {
         if (info.visibleFraction > 0) {
-          histories = Store.getLocalHistory();
           setState(() {
+            histories = Store.getLocalHistory();
             histories = histories.where((item) => item.isLove).toList();
           });
         }

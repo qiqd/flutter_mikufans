@@ -1,9 +1,18 @@
 name: mikufans
-description: " 一个基于 Flutter 的 MikuFans 应用"
+description: "A Flutter-based MikuFans application"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-
+msix_config:
+  display_name: mikufans
+  publisher_display_name: qiqd
+  identity_name: com.github.qiqd.flutter.mikufans
+  msix_version: 1.0.0.0
+  logo_path: lib/images/icon_linux.png # 推荐 400x400 或更大
+  capabilities: internetClient # 网络访问权限
+  store: false # 是否发布到 Microsoft Store
+  description: "A Flutter-based MikuFans application for Windows"
+  publisher: "CN=qiqd"
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -56,7 +65,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  build_runner: ^2.4.7 # 必需：代码生成工具
+  build_runner: ^2.4.7
+  msix: ^3.16.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
