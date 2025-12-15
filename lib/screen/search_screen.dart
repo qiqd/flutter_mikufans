@@ -17,6 +17,11 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _isSearching = false;
   List<Work> _medias = List.empty();
   void searchHandle(Function(String) onMssage) {
+    if (_keyword.isEmpty) {
+      onMssage("关键字不能为空");
+      return;
+    }
+
     _isSearching = true;
     _parser
         .fetchSearch(_keyword, 1, 10, (err) {})
@@ -41,7 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SearchBar(
                 elevation: const WidgetStatePropertyAll(0),
                 surfaceTintColor: const WidgetStatePropertyAll(
@@ -73,6 +78,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
               ),
             ),
+            SizedBox(height: 6),
             Expanded(
               child: _isSearching
                   ? const Center(child: CircularProgressIndicator())

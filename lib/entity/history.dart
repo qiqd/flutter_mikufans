@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:mikufans/entity/work.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'history.g.dart';

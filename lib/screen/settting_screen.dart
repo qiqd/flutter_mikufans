@@ -292,21 +292,27 @@ class _SetttingScreenState extends State<SetttingScreen> {
           Card(
             child: Column(
               children: [
+                // ListTile(
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.only(
+                //       topLeft: Radius.circular(12),
+                //       topRight: Radius.circular(12),
+                //     ), // 12 dp 圆角
+                //   ),
+                //   title: const Text('清除缓存'),
+                //   subtitle: const Text('清除视频缓存和临时文件'),
+                //   trailing: const Icon(Icons.delete_outline),
+                //   onTap: () {
+                //     _showClearCacheDialog();
+                //   },
+                // ),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
-                    ), // 12 dp 圆角
+                    ),
                   ),
-                  title: const Text('清除缓存'),
-                  subtitle: const Text('清除视频缓存和临时文件'),
-                  trailing: const Icon(Icons.delete_outline),
-                  onTap: () {
-                    _showClearCacheDialog();
-                  },
-                ),
-                ListTile(
                   title: const Text('关于'),
                   subtitle: const Text('应用信息和版本'),
                   trailing: const Icon(Icons.info_outline),
@@ -511,18 +517,66 @@ class _SetttingScreenState extends State<SetttingScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('关于 MikuFans'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('MikuFans 动漫播放器'),
-            const SizedBox(height: 8),
-            const Text('版本: 1.0.0'),
-            const SizedBox(height: 8),
-            const Text('基于 Flutter 开发'),
-            const SizedBox(height: 16),
-            const Text('© 2024 MikuFans'),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'MikuFans 动漫播放器',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              const Text('版本: 1.0.0'),
+              const SizedBox(height: 8),
+              const Text('基于 Flutter 开发'),
+              const SizedBox(height: 16),
+
+              const Text(
+                '开源库声明',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '本应用使用了以下开源库：\n'
+                '• go_router: ^17.0.1 - Flutter 路由管理 (BSD 协议)\n'
+                '• dio: ^5.9.0 - 网络请求库 (MIT 协议)\n'
+                '• media_kit: ^1.2.6 - 媒体播放框架 (MIT 协议)\n'
+                '• shared_preferences: ^2.5.4 - 本地存储 (BSD 协议)\n'
+                '• window_manager: ^0.5.1 - 窗口管理 (MIT 协议)\n'
+                '• tray_manager: ^0.5.2 - 系统托盘 (MIT 协议)\n'
+                '• html: ^0.15.6 - HTML 解析 (BSD 协议)\n'
+                '• encrypt: ^5.0.3 - 加密解密 (MIT 协议)\n'
+                '• cupertino_icons: ^1.0.8 - 图标库 (MIT 协议)\n'
+                '• visibility_detector: ^0.4.0+2 - 可见性检测 (Apache 2.0 协议)',
+                style: TextStyle(fontSize: 12),
+              ),
+              const SizedBox(height: 16),
+
+              const Text('开源协议', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              const Text(
+                '本应用开源协议：\n'
+                '[此处留空，后续添加具体开源协议内容]',
+                style: TextStyle(fontSize: 12),
+              ),
+              const SizedBox(height: 16),
+
+              const Text('使用条款', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              const Text(
+                '1. 本应用所有资源均来源于互联网，仅供学习交流使用\n'
+                '2. 本应用不存储任何个人信息，尊重用户隐私\n'
+                '3. 本应用禁止用于任何商业用途\n'
+                '4. 用户使用本应用即视为同意本声明的所有条款\n'
+                '5. 如对本应用内容存在异议，请立即停止使用',
+                style: TextStyle(fontSize: 12),
+              ),
+              const SizedBox(height: 16),
+
+              const Text('© 2025 MikuFans', style: TextStyle(fontSize: 12)),
+            ],
+          ),
         ),
         actions: [
           TextButton(

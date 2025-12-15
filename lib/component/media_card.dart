@@ -292,7 +292,7 @@ class MediaCard extends StatelessWidget {
                                   child: Text(
                                     episodeIndex == 0
                                         ? '播放'
-                                        : '继续观看第$episodeIndex集',
+                                        : '继续观看第${episodeIndex! + 1}集',
                                   ),
                                 ),
                               ),

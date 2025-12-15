@@ -7,7 +7,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:mikufans/screen/player_screen.dart';
 import 'package:mikufans/entity/detail.dart';
 import 'package:mikufans/entity/source.dart';
-import 'package:mikufans/screen/detail.dart';
+import 'package:mikufans/screen/detail_screen.dart';
 import 'package:mikufans/screen/history_screen.dart';
 import 'package:mikufans/screen/search_screen.dart';
 import 'package:mikufans/screen/settting_screen.dart';
@@ -68,7 +68,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with TrayListener, WindowListener {
-  final GoRouter _router = GoRouter(
+  late final GoRouter _router = GoRouter(
+    // observers: [routeObserver],
     initialLocation: '/search',
     routes: [
       StatefulShellRoute.indexedStack(
@@ -252,7 +253,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: 25, top: 5),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6), // 想多圆就调多大
+                        borderRadius: BorderRadius.circular(6),
                         child: Image.asset(
                           'lib/images/icon_linux.png',
                           height: 30,
