@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_single_instance/flutter_single_instance.dart';
 import 'package:go_router/go_router.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:mikufans/component/title_bar.dart';
@@ -21,14 +22,18 @@ void main() async {
     await Store.init();
     WidgetsFlutterBinding.ensureInitialized();
     MediaKit.ensureInitialized();
-    windowManager.ensureInitialized();
+    await windowManager.ensureInitialized();
+    if (!(await FlutterSingleInstance().isFirstInstance())) {
+      await windowManager.show();
+      await windowManager.focus();
+      exit(0);
+    }
     trayManager.setIcon(
       Platform.isWindows
           ? 'lib/images/icon_windows.ico'
           : 'lib/images/icon_linux.png',
     );
-    windowManager.setPreventClose(Store.getBool('minimize_to_tray'));
-
+    await windowManager.setPreventClose(Store.getBool('minimize_to_tray'));
     WindowOptions windowOptions = const WindowOptions(
       minimumSize: Size(800, 600),
       titleBarStyle: TitleBarStyle.hidden,
@@ -42,13 +47,14 @@ void main() async {
         MenuItem(key: 'exit_app', label: '退出应用'),
       ],
     );
-    trayManager.setContextMenu(menu);
-    trayManager.setToolTip('MikuFans');
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await trayManager.setContextMenu(menu);
+    await trayManager.setToolTip('MikuFans');
+    await windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       await windowManager.focus();
     });
-    runApp(MyApp());
+
+    runApp(const MyApp());
   } catch (e, s) {
     final logFile = File('${Directory.current.path}/crash.log');
     logFile.writeAsStringSync(
