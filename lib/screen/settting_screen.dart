@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mikufans/main.dart';
 import 'package:mikufans/util/store_util.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SetttingScreen extends StatefulWidget {
   final Function(int index)? onThemeModeChange;
@@ -530,6 +531,28 @@ class _SetttingScreenState extends State<SetttingScreen> {
               const Text('版本: 1.0.0'),
               const SizedBox(height: 8),
               const Text('基于 Flutter 开发'),
+              const SizedBox(height: 16),
+
+              const Text('项目仓库', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () async {
+                  final Uri url = Uri.parse(
+                    'https://github.com/qiqd/flutter_mikufans',
+                  );
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  }
+                },
+                child: const Text(
+                  'https://github.com/qiqd/flutter_mikufans',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
 
               const Text(
