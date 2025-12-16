@@ -30,8 +30,7 @@ jobs:
       
       - name: Create Release Archive
         run: |
-          cd build/windows/x64/runner/Release
-          7z a ../../../../mikufans-windows-x86-${{ github.event.inputs.version }}.zip *
+          7z a mikufans-windows-x86-${{ github.event.inputs.version }}.zip build/windows/x64/runner/Release/*
       
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -60,8 +59,7 @@ jobs:
       
       - name: Create Release Archive
         run: |
-          cd build/windows/x64/runner/Release
-          7z a ../../../../mikufans-windows-arm-${{ github.event.inputs.version }}.zip *
+          7z a mikufans-windows-arm-${{ github.event.inputs.version }}.zip build/windows/x64/runner/Release/*
       
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -90,8 +88,7 @@ jobs:
       
       - name: Create Release Archive
         run: |
-          cd build/macos/Build/Products/Release
-          zip -r ../../../../mikufans-macos-arm-${{ github.event.inputs.version }}.zip MikuFans.app
+          zip -r mikufans-macos-arm-${{ github.event.inputs.version }}.zip build/macos/Build/Products/Release/mikufans.app
       
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -120,8 +117,7 @@ jobs:
       
       - name: Create Release Archive
         run: |
-          cd build/macos/Build/Products/Release
-          zip -r ../../../../mikufans-macos-intel-${{ github.event.inputs.version }}.zip MikuFans.app
+          zip -r mikufans-macos-intel-${{ github.event.inputs.version }}.zip build/macos/Build/Products/Release/mikufans.app
       
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -155,8 +151,7 @@ jobs:
       
       - name: Create Release Archive
         run: |
-          cd build/linux/x64/release/bundle
-          zip -r ../../../../../mikufans-linux-debian-${{ github.event.inputs.version }}.zip *
+          zip -r mikufans-linux-debian-${{ github.event.inputs.version }}.zip build/linux/x64/release/bundle/*
       
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -190,8 +185,7 @@ jobs:
       
       - name: Create Release Archive
         run: |
-          cd build/linux/x64/release/bundle
-          zip -r ../../../../../mikufans-linux-redhat-${{ github.event.inputs.version }}.zip *
+          zip -r mikufans-linux-redhat-${{ github.event.inputs.version }}.zip build/linux/x64/release/bundle/*
       
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
