@@ -30,7 +30,7 @@ class _SetttingScreenState extends State<SetttingScreen> {
   Future<void> _loadSettings() async {
     // 从本地存储加载设置
     setState(() {
-      // _autoPlay = Store.getBool('auto_play');
+      _autoPlay = Store.getBool('auto_play');
       // _skipIntro = Store.getBool('skip_intro');
       // _playbackSpeed = Store.getDouble('playback_speed');
       _showTrayIcon = Store.getBool('show_tray_icon');
@@ -557,7 +557,7 @@ class _SetttingScreenState extends State<SetttingScreen> {
               const SizedBox(height: 8),
               const Text(
                 '本应用开源协议：\n'
-                '[此处留空，后续添加具体开源协议内容]',
+                'AGPL-3.0',
                 style: TextStyle(fontSize: 12),
               ),
               const SizedBox(height: 16),
