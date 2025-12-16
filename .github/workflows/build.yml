@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Build Version"
+        description: 'Build Version'
         required: true
-        default: "1.0.0"
+        default: '1.0.0'
 
 jobs:
   # Windows x86 Build
@@ -15,24 +15,24 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.38.4"
-          channel: "stable"
-
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
       - name: Install dependencies
         run: flutter pub get
-
+      
       - name: Build Windows x86
-        run: flutter build windows --release --target-platform windows-x86
-
+        run: flutter build windows --release
+      
       - name: Create Release Archive
         run: |
           cd build/windows/x64/runner/Release
           7z a ../../../../mikufans-windows-x86-${{ github.event.inputs.version }}.zip *
-
+      
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -45,24 +45,24 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.38.4"
-          channel: "stable"
-
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
       - name: Install dependencies
         run: flutter pub get
-
+      
       - name: Build Windows ARM
-        run: flutter build windows --release --target-platform windows-arm64
-
+        run: flutter build windows --release --build-windows-arch arm64
+      
       - name: Create Release Archive
         run: |
           cd build/windows/x64/runner/Release
           7z a ../../../../mikufans-windows-arm-${{ github.event.inputs.version }}.zip *
-
+      
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -75,24 +75,24 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.38.4"
-          channel: "stable"
-
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
       - name: Install dependencies
         run: flutter pub get
-
+      
       - name: Build macOS ARM64
-        run: flutter build macos --release --target-platform macos-arm64
-
+        run: flutter build macos --release --build-macos-arch arm64
+      
       - name: Create Release Archive
         run: |
           cd build/macos/Build/Products/Release
           zip -r ../../../../mikufans-macos-arm-${{ github.event.inputs.version }}.zip MikuFans.app
-
+      
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -105,24 +105,24 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.38.4"
-          channel: "stable"
-
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
       - name: Install dependencies
         run: flutter pub get
-
+      
       - name: Build macOS x64
-        run: flutter build macos --release --target-platform macos-x64
-
+        run: flutter build macos --release --build-macos-arch x64
+      
       - name: Create Release Archive
         run: |
           cd build/macos/Build/Products/Release
           zip -r ../../../../mikufans-macos-intel-${{ github.event.inputs.version }}.zip MikuFans.app
-
+      
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -135,29 +135,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.38.4"
-          channel: "stable"
-
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libayatana-appindicator3-dev
-
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libayatana-appindicator3-dev libmpv-dev
+      
       - name: Install Flutter dependencies
         run: flutter pub get
-
+      
       - name: Build Linux
         run: flutter build linux --release
-
+      
       - name: Create Release Archive
         run: |
           cd build/linux/x64/release/bundle
           zip -r ../../../../../mikufans-linux-debian-${{ github.event.inputs.version }}.zip *
-
+      
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -170,29 +170,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.38.4"
-          channel: "stable"
-
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libayatana-appindicator3-dev
-
+      
       - name: Install Flutter dependencies
         run: flutter pub get
-
+      
       - name: Build Linux
         run: flutter build linux --release
-
+      
       - name: Create Release Archive
         run: |
           cd build/linux/x64/release/bundle
           zip -r ../../../../../mikufans-linux-redhat-${{ github.event.inputs.version }}.zip *
-
+      
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
