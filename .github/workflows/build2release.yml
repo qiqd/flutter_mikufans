@@ -1,4 +1,4 @@
-name: Build MikuFans
+name: Build MikuFans to release
 
 on:
   workflow_dispatch:
