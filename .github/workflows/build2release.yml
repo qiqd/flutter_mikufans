@@ -1,4 +1,6 @@
 name: Build MikuFans to release
+permissions:
+  contents: write
 
 on:
   workflow_dispatch:
