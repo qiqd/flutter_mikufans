@@ -1,0 +1,252 @@
+name: Build MikuFans
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Build Version'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  # Windows x86 Build
+  build-windows-x86:
+    name: Build Windows x86
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Build Windows x86
+        run: flutter build windows --release
+      
+      - name: Create Release Archive
+        run: |
+          7z a mikufans-windows-x86-${{ github.event.inputs.version }}.zip build/windows/x64/runner/Release/*
+      
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mikufans-windows-x86
+          path: mikufans-windows-x86-${{ github.event.inputs.version }}.zip
+
+  # Windows ARM Build
+  build-windows-arm:
+    name: Build Windows ARM
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Build Windows ARM
+        run: flutter build windows --release
+      
+      - name: Create Release Archive
+        run: |
+          7z a mikufans-windows-arm-${{ github.event.inputs.version }}.zip build/windows/x64/runner/Release/*
+      
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mikufans-windows-arm
+          path: mikufans-windows-arm-${{ github.event.inputs.version }}.zip
+
+  # macOS M Build (ARM64)
+  build-macos-arm:
+    name: Build macOS M (ARM64)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Build macOS ARM64
+        run: flutter build macos --release
+      
+      - name: Create Release Archive
+        run: |
+          zip -r mikufans-macos-arm-${{ github.event.inputs.version }}.zip build/macos/Build/Products/Release/mikufans.app
+      
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mikufans-macos-arm
+          path: mikufans-macos-arm-${{ github.event.inputs.version }}.zip
+
+  # macOS Intel Build (x64)
+  build-macos-intel:
+    name: Build macOS Intel (x64)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Build macOS x64
+        run: flutter build macos --release
+      
+      - name: Create Release Archive
+        run: |
+          zip -r mikufans-macos-intel-${{ github.event.inputs.version }}.zip build/macos/Build/Products/Release/mikufans.app
+      
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mikufans-macos-intel
+          path: mikufans-macos-intel-${{ github.event.inputs.version }}.zip
+
+  # Linux Debian Build
+  build-linux-debian:
+    name: Build Linux Debian
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libayatana-appindicator3-dev libmpv-dev
+      
+      - name: Install Flutter dependencies
+        run: flutter pub get
+      
+      - name: Build Linux
+        run: flutter build linux --release
+      
+      - name: Create Release Archive
+        run: |
+          zip -r mikufans-linux-debian-${{ github.event.inputs.version }}.zip build/linux/x64/release/bundle/*
+      
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mikufans-linux-debian
+          path: mikufans-linux-debian-${{ github.event.inputs.version }}.zip
+
+  # Linux Red Hat Build
+  build-linux-redhat:
+    name: Build Linux Red Hat
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.4'
+          channel: 'stable'
+      
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libayatana-appindicator3-dev libmpv-dev
+      
+      - name: Install Flutter dependencies
+        run: flutter pub get
+      
+      - name: Build Linux
+        run: flutter build linux --release
+      
+      - name: Create Release Archive
+        run: |
+          zip -r mikufans-linux-redhat-${{ github.event.inputs.version }}.zip build/linux/x64/release/bundle/*
+      
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mikufans-linux-redhat
+          path: mikufans-linux-redhat-${{ github.event.inputs.version }}.zip
+
+  # Create GitHub Release
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-windows-x86, build-windows-arm, build-macos-arm, build-macos-intel, build-linux-debian, build-linux-redhat]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+      
+      - name: List all downloaded files
+        run: ls -la ./artifacts/*
+      
+      - name: Prepare Release Files
+        run: |
+          mkdir -p ./release-files
+          cp ./artifacts/mikufans-windows-x86/mikufans-windows-x86-${{ github.event.inputs.version }}.zip ./release-files/
+          cp ./artifacts/mikufans-windows-arm/mikufans-windows-arm-${{ github.event.inputs.version }}.zip ./release-files/
+          cp ./artifacts/mikufans-macos-arm/mikufans-macos-arm-${{ github.event.inputs.version }}.zip ./release-files/
+          cp ./artifacts/mikufans-macos-intel/mikufans-macos-intel-${{ github.event.inputs.version }}.zip ./release-files/
+          cp ./artifacts/mikufans-linux-debian/mikufans-linux-debian-${{ github.event.inputs.version }}.zip ./release-files/
+          cp ./artifacts/mikufans-linux-redhat/mikufans-linux-redhat-${{ github.event.inputs.version }}.zip ./release-files/
+          zip -r ./release-files/mikufans-source-${{ github.event.inputs.version }}.zip . -x ".git/*" ".github/*" "build/*" "release-files/*" "artifacts/*" "*.log" "*.iml"
+      
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: MikuFans ${{ github.event.inputs.version }}
+          tag: v${{ github.event.inputs.version }}
+          commit: ${{ github.sha }}
+          artifacts: ./release-files/*
+          body: |
+            # MikuFans ${{ github.event.inputs.version }}
+            
+            A Flutter-based anime player application for multiple platforms.
+            
+            ## What's Changed
+            
+            - Updated to Flutter 3.38.4
+            - Build for multiple platforms: Windows x86, Windows ARM, macOS ARM, macOS Intel, Linux Debian, Linux Red Hat
+            
+            ## Features
+            
+            - **Multi-platform Support**: Windows, macOS, Linux
+            - **Media Playback**: High-quality video playback with hardware acceleration support
+            - **Theme Support**: Light, dark, and system theme modes
+            - **System Tray Integration**: Minimize to system tray for convenient access
+            - **Hardware Acceleration**: Optimized video decoding for better performance
+            - **Search Functionality**: Easy to search and discover anime content
+            - **History Tracking**: Keep track of your viewing history
+            - **Subscription Management**: Subscribe to your favorite anime
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
