@@ -1,9 +1,9 @@
 import 'dart:core';
 
-import 'package:mikufans/entity/detail.dart';
-import 'package:mikufans/entity/work.dart';
-import 'package:mikufans/entity/timetable.dart';
-import 'package:mikufans/entity/view_info.dart';
+import 'package:desktop_holo/entity/detail.dart';
+import 'package:desktop_holo/entity/work.dart';
+import 'package:desktop_holo/entity/timetable.dart';
+import 'package:desktop_holo/entity/view_info.dart';
 
 /// HTML解析接口规范
 abstract class Parser {

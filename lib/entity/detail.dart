@@ -1,5 +1,5 @@
-import 'package:mikufans/entity/work.dart';
-import 'package:mikufans/entity/source.dart';
+import 'package:desktop_holo/entity/work.dart';
+import 'package:desktop_holo/entity/source.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'detail.g.dart';
 

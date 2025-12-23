@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:mikufans/service/impl/aafun.dart';
+import 'package:desktop_holo/service/impl/aafun.dart';
 
 void main() {
   group("AafunParser", () {

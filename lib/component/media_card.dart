@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:mikufans/entity/work.dart';
-import 'package:mikufans/util/datetime_util.dart';
+import 'package:desktop_holo/entity/work.dart';
+import 'package:desktop_holo/util/datetime_util.dart';
 
 class MediaCard extends StatelessWidget {
   final Work media;

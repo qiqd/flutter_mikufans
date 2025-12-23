@@ -8,12 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:mikufans/component/media_card.dart';
-import 'package:mikufans/entity/detail.dart';
-import 'package:mikufans/entity/history.dart';
-import 'package:mikufans/entity/source.dart';
-import 'package:mikufans/service/impl/aafun.dart';
-import 'package:mikufans/util/store_util.dart';
+import 'package:desktop_holo/component/media_card.dart';
+import 'package:desktop_holo/entity/detail.dart';
+import 'package:desktop_holo/entity/history.dart';
+import 'package:desktop_holo/entity/source.dart';
+import 'package:desktop_holo/service/impl/aafun.dart';
+import 'package:desktop_holo/util/store_util.dart';
 import 'package:window_manager/window_manager.dart';
 
 class PlayerScreen extends StatefulWidget {

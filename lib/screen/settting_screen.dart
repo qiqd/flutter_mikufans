@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mikufans/main.dart';
-import 'package:mikufans/util/store_util.dart';
+import 'package:desktop_holo/main.dart';
+import 'package:desktop_holo/util/store_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SetttingScreen extends StatefulWidget {
@@ -517,14 +517,14 @@ class _SetttingScreenState extends State<SetttingScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('关于 MikuFans'),
+        title: const Text('关于 desktop_holo'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'MikuFans 动漫播放器',
+                'desktop_holo 动漫播放器',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -538,14 +538,14 @@ class _SetttingScreenState extends State<SetttingScreen> {
               GestureDetector(
                 onTap: () async {
                   final Uri url = Uri.parse(
-                    'https://github.com/qiqd/flutter_mikufans',
+                    'https://github.com/qiqd/flutter_desktop_holo',
                   );
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url);
                   }
                 },
                 child: const Text(
-                  'https://github.com/qiqd/flutter_mikufans',
+                  'https://github.com/qiqd/flutter_desktop_holo',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.blue,
@@ -597,7 +597,7 @@ class _SetttingScreenState extends State<SetttingScreen> {
               ),
               const SizedBox(height: 16),
 
-              const Text('© 2025 MikuFans', style: TextStyle(fontSize: 12)),
+              const Text('© 2025 desktop_holo', style: TextStyle(fontSize: 12)),
             ],
           ),
         ),

@@ -1,4 +1,4 @@
-import 'package:mikufans/service/parser.dart';
+import 'package:desktop_holo/service/parser.dart';
 
 class SourceDelay {
   final int delay;

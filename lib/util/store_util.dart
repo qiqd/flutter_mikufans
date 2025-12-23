@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:mikufans/entity/history.dart';
+import 'package:desktop_holo/entity/history.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Store {
-  static const String key = "mikufans_local_history";
+  static const String key = "desktop_holo_local_history";
   static late SharedPreferences prefs;
 
   static Future<void> init() async {

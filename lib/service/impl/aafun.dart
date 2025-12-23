@@ -4,14 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:mikufans/entity/detail.dart';
-import 'package:mikufans/entity/episode.dart';
-import 'package:mikufans/entity/work.dart';
-import 'package:mikufans/entity/source.dart';
-import 'package:mikufans/entity/timetable.dart';
-import 'package:mikufans/entity/view_info.dart';
-import 'package:mikufans/util/http_util.dart';
-import 'package:mikufans/service/parser.dart';
+import 'package:desktop_holo/entity/detail.dart';
+import 'package:desktop_holo/entity/episode.dart';
+import 'package:desktop_holo/entity/work.dart';
+import 'package:desktop_holo/entity/source.dart';
+import 'package:desktop_holo/entity/timetable.dart';
+import 'package:desktop_holo/entity/view_info.dart';
+import 'package:desktop_holo/util/http_util.dart';
+import 'package:desktop_holo/service/parser.dart';
 
 class AafunParser extends Parser {
   @override

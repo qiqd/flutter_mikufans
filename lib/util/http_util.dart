@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:mikufans/entity/source_delay.dart';
-import 'package:mikufans/service/parser.dart';
+import 'package:desktop_holo/entity/source_delay.dart';
+import 'package:desktop_holo/service/parser.dart';
 
 class HttpUtil {
   static final List<String> userAgents = [

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mikufans/component/media_card.dart';
-import 'package:mikufans/component/title_bar.dart';
-import 'package:mikufans/entity/detail.dart';
-import 'package:mikufans/entity/history.dart';
+import 'package:desktop_holo/component/media_card.dart';
+import 'package:desktop_holo/component/title_bar.dart';
+import 'package:desktop_holo/entity/detail.dart';
+import 'package:desktop_holo/entity/history.dart';
 
-import 'package:mikufans/service/impl/aafun.dart';
-import 'package:mikufans/util/store_util.dart';
+import 'package:desktop_holo/service/impl/aafun.dart';
+import 'package:desktop_holo/util/store_util.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class DetailScreen extends StatefulWidget {

@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_single_instance/flutter_single_instance.dart';
 import 'package:go_router/go_router.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:mikufans/component/title_bar.dart';
-import 'package:mikufans/screen/player_screen.dart';
-import 'package:mikufans/entity/detail.dart';
-import 'package:mikufans/entity/source.dart';
-import 'package:mikufans/screen/detail_screen.dart';
-import 'package:mikufans/screen/history_screen.dart';
-import 'package:mikufans/screen/search_screen.dart';
-import 'package:mikufans/screen/settting_screen.dart';
-import 'package:mikufans/screen/subscribe_screen.dart';
-import 'package:mikufans/util/store_util.dart';
+import 'package:desktop_holo/component/title_bar.dart';
+import 'package:desktop_holo/screen/player_screen.dart';
+import 'package:desktop_holo/entity/detail.dart';
+import 'package:desktop_holo/entity/source.dart';
+import 'package:desktop_holo/screen/detail_screen.dart';
+import 'package:desktop_holo/screen/history_screen.dart';
+import 'package:desktop_holo/screen/search_screen.dart';
+import 'package:desktop_holo/screen/settting_screen.dart';
+import 'package:desktop_holo/screen/subscribe_screen.dart';
+import 'package:desktop_holo/util/store_util.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -38,7 +38,7 @@ void main() async {
       minimumSize: Size(800, 600),
       titleBarStyle: TitleBarStyle.hidden,
       center: true,
-      title: 'MikuFans',
+      title: 'desktop_holo',
     );
     Menu menu = Menu(
       items: [
@@ -48,7 +48,7 @@ void main() async {
       ],
     );
     await trayManager.setContextMenu(menu);
-    await trayManager.setToolTip('MikuFans');
+    await trayManager.setToolTip('desktop_holo');
     await windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       await windowManager.focus();
@@ -175,7 +175,7 @@ class _MyAppState extends State<MyApp> with TrayListener, WindowListener {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routerConfig: _router,
-          title: 'MikuFans',
+          title: 'desktop_holo',
           themeMode: themeMode,
           theme: ThemeData(
             fontFamily: _effectiveFont,
@@ -292,7 +292,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 }
 
 void _showCrashTip(String logPath) async {
-  final String msg = 'MikuFans 启动失败，请查看 $logPath';
+  final String msg = 'desktop_holo 启动失败，请查看 $logPath';
 
   if (Platform.isWindows) {
     // Windows 弹窗
@@ -301,10 +301,10 @@ void _showCrashTip(String logPath) async {
     // macOS 弹窗（原生通知）
     await Process.run('osascript', [
       '-e',
-      'display notification "$msg" with title "MikuFans" sound name "Basso"',
+      'display notification "$msg" with title "desktop_holo" sound name "Basso"',
     ]);
   } else if (Platform.isLinux) {
     // Linux 弹窗
-    await Process.run('notify-send', ['-a', 'MikuFans', '启动失败', msg]);
+    await Process.run('notify-send', ['-a', 'desktop_holo', '启动失败', msg]);
   }
 }

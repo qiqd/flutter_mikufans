@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mikufans/entity/work.dart';
+import 'package:desktop_holo/entity/work.dart';
 part 'timetable.g.dart';
 
 @JsonSerializable()

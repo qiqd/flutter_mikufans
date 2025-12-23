@@ -1,4 +1,4 @@
-import 'package:mikufans/entity/episode.dart';
+import 'package:desktop_holo/entity/episode.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'source.g.dart';
 

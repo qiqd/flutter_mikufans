@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mikufans/component/media_card.dart';
-import 'package:mikufans/entity/work.dart';
-import 'package:mikufans/service/impl/aafun.dart';
+import 'package:desktop_holo/component/media_card.dart';
+import 'package:desktop_holo/entity/work.dart';
+import 'package:desktop_holo/service/impl/aafun.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
